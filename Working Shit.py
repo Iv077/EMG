@@ -52,7 +52,7 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 X = signal
 y = target
 clf = GaussianNB()        # Choosen clasifier 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=1)
 clf.fit(X_train, y_train)
 score = clf.score(X_test, y_test)
 print(score*100, '%')
