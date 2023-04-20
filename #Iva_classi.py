@@ -16,11 +16,11 @@ all_files = glob.glob(path + "*.csv")
 
 
 li = []
-for filename in all_files:
+for filename in all_files:                                                                                                                                                                                                                                                                                                                                                                                              
     flat_list = []
-    emg = pd.read_csv(filename, index_col=1, delimiter=',', usecols=range(1,9))
+    emg = pd.read_csv(filename, index_col=1, delimiter=',', usecols=range(1,9), nrows=397)
     emg_correctmean = emg - np.mean(emg, axis=0)
-    low_pass=40 # low: low-pass cut off frequency
+    low_pass=20 # low: low-pass cut off frequency
     sfreq=1000 # sfreq: sampling frequency
     high_band=40
     low_band=450
@@ -54,7 +54,6 @@ for filename in all_files:
 
 
 
-
 tar = ["Switch", "Freeze", "On/Off", "Forwards", "Backwards", "Left", "Right", "Up", "Down"]
 n = 10
 target = np.repeat(tar, n) # reperat each element n times
@@ -79,64 +78,12 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
 X = signal
 y = target
-clf = SVC(kernel="linear", C=0.025)      # Choosen clasifier 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=1)
+clf = SVC()      # Choosen clasifier 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2  , random_state=42)
 clf.fit(X_train, y_train)
 score = clf.score(X_test, y_test)
+#print(X_test, y_test)
 print(score*100, '%')
 
 file = 'EMG_Classifier.sav'
 joblib.dump(clf, file)
-
-
-
-
-
-
-
-
-
-
-#---------------Just to check -------------------#
-
-
-# import numpy as np
-# from sklearn.model_selection import train_test_split
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.neural_network import MLPClassifier
-# from sklearn.neighbors import KNeighborsClassifier
-# from sklearn.svm import SVC
-# from sklearn.gaussian_process import GaussianProcessClassifier
-# from sklearn.gaussian_process.kernels import RBF
-# from sklearn.tree import DecisionTreeClassifier
-# from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-# from sklearn.naive_bayes import GaussianNB
-# from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-
-# classifiers = [
-#     KNeighborsClassifier(3),
-#     SVC(kernel="linear", C=0.025),
-#     SVC(gamma=2, C=1),
-#     GaussianProcessClassifier(1.0 * RBF(1.0)),
-#     DecisionTreeClassifier(max_depth=5),
-#     RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
-#     MLPClassifier(alpha=1, max_iter=1000),
-#     AdaBoostClassifier(),
-#     GaussianNB(),
-#     QuadraticDiscriminantAnalysis()]
-
-# names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
-#          "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
-#          "Naive Bayes", "QDA"]
-
-
-# X = signal
-# y = target
-
-# #X = StandardScaler().fit_transform(X)
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=42)
-
-# for name, clf in zip(names, classifiers):
-#     clf.fit(X_train, y_train)
-#     score = clf.score(X_test, y_test)
-#     print(name, score)
