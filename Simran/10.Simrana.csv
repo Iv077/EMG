@@ -395,3 +395,7 @@ timestamp,sensor1,sensor2,sensor3,sensor4,sensor5,sensor6,sensor7,sensor8,label
 1954,3,9,-11,4,-1,2,3,0,Switch
 1969,9,3,10,-11,4,11,7,7,Switch
 1969,19,6,-8,14,-4,-8,-3,4,Switch
+1969,-16,-2,-2,-1,0,-7,-4,-11,Switch
+1969,-5,-7,-22,-9,-8,-4,-7,1,Switch
+1969,15,-8,-22,6,9,-1,1,9,Switch
+1986,-3,6,-55,1,7,11,12,-2,Switch

@@ -395,3 +395,6 @@ timestamp,sensor1,sensor2,sensor3,sensor4,sensor5,sensor6,sensor7,sensor8,label
 1980,-26,3,29,27,2,-1,5,-4,On/Off
 1985,28,-7,-23,-4,-1,0,-10,-10,On/Off
 1986,6,-16,-13,7,-3,-1,6,-2,On/Off
+1993,-2,0,6,-2,0,-1,-1,2,On/Off
+1994,-18,3,-7,1,5,1,2,-4,On/Off
+1998,23,1,17,13,-2,-6,-9,13,On/Off

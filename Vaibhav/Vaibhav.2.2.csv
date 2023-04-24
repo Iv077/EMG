@@ -395,3 +395,6 @@ timestamp,sensor1,sensor2,sensor3,sensor4,sensor5,sensor6,sensor7,sensor8,label
 1973,0,-2,1,-1,1,2,7,4,Freeze
 1980,-1,-1,2,1,-3,-2,4,1,Freeze
 1982,-3,-2,6,-1,-1,-4,-10,-5,Freeze
+1996,-1,-1,8,-2,2,2,3,2,Freeze
+1997,-2,0,9,-1,-1,-2,-4,0,Freeze
+1999,-3,-5,-2,-3,-3,-3,-5,-4,Freeze

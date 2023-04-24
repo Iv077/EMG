@@ -395,3 +395,7 @@ timestamp,sensor1,sensor2,sensor3,sensor4,sensor5,sensor6,sensor7,sensor8,label
 1970,-19,2,5,5,-4,-2,-3,-19,Forwards
 1974,3,-1,-4,21,2,-1,-1,-2,Forwards
 1975,-2,3,-11,-9,1,-2,-1,-3,Forwards
+1991,5,-10,-2,-9,-5,-1,0,11,Forwards
+1994,-1,-7,0,-11,1,1,2,5,Forwards
+1995,-2,-8,0,5,-4,-4,-4,-7,Forwards
+1996,-10,1,11,0,-2,-1,-2,-9,Forwards

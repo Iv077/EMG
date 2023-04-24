@@ -395,3 +395,5 @@ timestamp,sensor1,sensor2,sensor3,sensor4,sensor5,sensor6,sensor7,sensor8,label
 1962,8,0,-1,7,3,1,-1,13,Down
 1985,-4,-10,-2,8,-2,0,-2,-12,Down
 1987,-14,-6,-4,-4,-1,0,2,-1,Down
+1990,-1,-2,0,2,0,-1,-1,-4,Down
+1990,-4,-4,-14,9,2,1,1,2,Down

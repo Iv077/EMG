@@ -2,9 +2,8 @@ from collections import deque
 from threading import Lock, Thread
 import joblib
 import scipy as sp
-from scipy.signal import filtfilt
 import socket
-
+from time import sleep
 
 import myo
 import numpy as np
@@ -39,22 +38,23 @@ class Plot(object):
   def __init__(self, listener):
     self.n = listener.n
     self.listener = listener
- 
+
   def update_plot(self):
     emg_data = self.listener.get_emg_data()
     while len(emg_data) < self.n:
         emg_data = self.listener.get_emg_data()
     if len(emg_data) == self.n:
-      #print('Ready for your gestures:/n')
+      print('Checking gesture')
       emg_data = np.array([x[1] for x in emg_data]).T
-      #print(emg_data.shape)
+      
+      
       #---------------------------------------------------------------------------------------------------------------
       classifier = joblib.load('EMG_Classifier.sav')
       emg_iva = emg_data                                                            #
       for d in emg_iva:                                                             #
         flat_list = []                                                              #
         for item in d:        
-            flat_list.append(item)                                                #
+            flat_list.append(item)                                                  #
       
         emg_correctmean = flat_list - np.mean(flat_list, axis=0)
         low_pass=40 # low: low-pass cut off frequency
@@ -81,9 +81,97 @@ class Plot(object):
         low_pass = low_pass/(sfreq/2)
         b2, a2 = sp.signal.butter(4, low_pass, btype='lowpass')
         emg_envelope = np.array(sp.signal.filtfilt(b2, a2, emg_rectified, axis=0))
-        
-        classi = classifier.predict(emg_envelope.reshape(1,-1))
-        print(classi)
+
+        if len(emg_envelope) >= 1365:
+            classi = classifier.predict(emg_envelope.reshape(1,-1))
+            if classi == ['Forw']:
+                print('Forwards')
+                # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                # PORT = 3020  # port number for socket communication
+                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # sock.connect((HOST, PORT))
+                # message = "forward".encode()
+                # sock.send(message)
+                # sock.close()
+                sleep(1)
+
+            if classi == ['Left']:
+                print('Left')
+                # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                # PORT = 3020  # port number for socket communication
+                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # sock.connect((HOST, PORT))
+                # message = "left".encode()
+                # sock.send(message)
+                # sock.close()
+                sleep(1)
+
+            if classi == ['Right']:
+                print('Right')
+                # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                # PORT = 3020  # port number for socket communication
+                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # sock.connect((HOST, PORT))
+                # message = "right".encode()
+                # sock.send(message)
+                # sock.close()
+                sleep(1)
+
+            if classi == ['Switch']:
+                print('Switch')
+                # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                # PORT = 3020  # port number for socket communication
+                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # sock.connect((HOST, PORT))
+                # message = "switch".encode()
+                # sock.send(message)
+                # sock.close()
+                sleep(1)
+
+            if classi == ['Back']:
+                print('Backwards')
+                # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                # PORT = 3020  # port number for socket communication
+                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # sock.connect((HOST, PORT))
+                # message = "station".encode()
+                # sock.send(message)
+                # sock.close()
+                sleep(1)
+
+            if classi == ['Up']:
+                print('Up')
+                # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                # PORT = 3020  # port number for socket communication
+                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # sock.connect((HOST, PORT))
+                # message = "station".encode()
+                # sock.send(message)
+                # sock.close()
+                sleep(1)
+            
+            if classi == ['Down']:
+                print('Down')
+                # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                # PORT = 3020  # port number for socket communication
+                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # sock.connect((HOST, PORT))
+                # message = "station".encode()
+                # sock.send(message)
+                # sock.close()
+                sleep(1)
+            
+            if classi == ['Freeze']:
+                print('Freeze')
+                # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                # PORT = 3020  # port number for socket communication
+                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # sock.connect((HOST, PORT))
+                # message = "station".encode()
+                # sock.send(message)
+                # sock.close()
+                sleep(1)
+
 
 
       #------------------------------------------------------------------------------------------------------------
@@ -96,7 +184,7 @@ class Plot(object):
 def main():
   myo.init()
   hub = myo.Hub()
-  listener = EmgCollector(2772)
+  listener = EmgCollector(2730)
   with hub.run_in_background(listener.on_event):
     Plot(listener).main()
 
