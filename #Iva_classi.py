@@ -20,7 +20,7 @@ for filename in all_files:
     emg = pd.read_csv(filename, index_col=1, delimiter=',', usecols=range(1,9), nrows=390)
     emg_correctmean = emg - np.mean(emg, axis=0)
     low_pass=40 # low: low-pass cut off frequency
-    sfreq=390 # sfreq: sampling frequency
+    sfreq=1000 # sfreq: sampling frequency
     high_band=40
     low_band=450
     

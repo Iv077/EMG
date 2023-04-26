@@ -49,8 +49,8 @@ class Plot(object):
     emg_sig = self.listener.get_emg_data()
     emg_sig = np.array([x[1] for x in emg_sig]).T
     if not self.start_collecting:
+      print('Expecting a gesture')
       if np.any(emg_sig >= 50):
-        
         self.start_collecting = True
         self.collected_data = []
         #print('Start collecting data for classification.')
@@ -60,64 +60,60 @@ class Plot(object):
       
     # Collect data for classification
     if self.start_collecting:   # only collect data if start_collecting is True
+      #print('Recording the gesture')
       emg_data = self.listener.get_emg_data()
       #emg_data = np.array([x[1] for x in emg_data]).T
       if len(emg_data) > 0:
         timestamp, emg_list = emg_data[-1]
         if timestamp != self.last_timestamp:
           self.last_timestamp = timestamp
-
+        
           self.collected_data.append(emg_list)
-          fl = np.array(self.collected_data).flatten()
-          cll = []
-          cll.append(fl)
-          col = []
-          col.append(cll)
-          print(emg_list)
-
-      # for d in emg_data:
-      #   self.collected_data.append(d)
-
-      #   print(self.collected_data)
-    #lis = np.array(self.collected_data).flatten()
+          if len(self.collected_data)== 342:
+            hi = []
+            for d in self.collected_data:
+                for i in d:
+                    hi.append(i)
+            #print(len(hi))
 
 
-    # # When the needed number of values is collected, perform classification
-    # if len(lis) >= 2730:                                                
-    #   emg_iva = lis [:2730]
-    #   #print(emg_iva)
-    
-    #   emg_correctmean = emg_iva - np.mean(emg_iva, axis=0)
-    #   low_pass=40 # low: low-pass cut off frequency
-    #   sfreq=1000 # sfreq: sampling frequency
-    #   high_band=40
-    #   low_band=450
-    #   # emg: EMG data
-    #   # high: high-pass cut off frequency
-      
-    #   # normalise cut-off frequencies to sampling frequency
-    #   high_band = high_band/(sfreq/2)
-    #   low_band = low_band/(sfreq/2)
+    # When the needed number of values is collected, perform classification
+            if len(hi) >= 2730:                                                
+                emg_iva = hi [:2730]
+                #print(emg_iva)
+                
+                emg_correctmean = emg_iva - np.mean(emg_iva, axis=0)
+                low_pass=40 # low: low-pass cut off frequency
+                sfreq=1000 # sfreq: sampling frequency
+                high_band=40
+                low_band=450
+                # emg: EMG data
+                # high: high-pass cut off frequency
+                
+                # normalise cut-off frequencies to sampling frequency
+                high_band = high_band/(sfreq/2)
+                low_band = low_band/(sfreq/2)
 
-    #   # create bandpass filter for EMG
-    #   b1, a1 = sp.signal.butter(4, [high_band,low_band], btype='bandpass')
+                # create bandpass filter for EMG
+                b1, a1 = sp.signal.butter(4, [high_band,low_band], btype='bandpass')
 
-    #   # process EMG signal: filter EMG
-    #   emg_filtered = sp.signal.filtfilt(b1, a1, emg_correctmean, axis=0)
+                # process EMG signal: filter EMG
+                emg_filtered = sp.signal.filtfilt(b1, a1, emg_correctmean, axis=0)
 
-    #   # process EMG signal: rectify
-    #   emg_rectified = abs(emg_filtered)
+                # process EMG signal: rectify
+                emg_rectified = abs(emg_filtered)
 
-    #   # create lowpass filter and apply to rectified signal to get EMG envelope
-    #   low_pass = low_pass/(sfreq/2)
-    #   b2, a2 = sp.signal.butter(4, low_pass, btype='lowpass')
-    #   emg_envelope = np.array(sp.signal.filtfilt(b2, a2, emg_rectified, axis=0))
-    #   print(emg_envelope.shape)
-    #   classi = self.classifier.predict(emg_envelope.reshape(1,-1))
-      
-    #   self.start_collecting = False
-    #   return(classi)
-    #   print('Classification result:', classi)
+                # create lowpass filter and apply to rectified signal to get EMG envelope
+                low_pass = low_pass/(sfreq/2)
+                b2, a2 = sp.signal.butter(4, low_pass, btype='lowpass')
+                emg_envelope = np.array(sp.signal.filtfilt(b2, a2, emg_rectified, axis=0))
+                #print(emg_envelope.shape)
+                classi = self.classifier.predict(emg_envelope.reshape(1,-1))
+                print('Classification result:', classi)
+
+                self.start_collecting = False
+                return
+                
 
 
       #------------------------------------------------------------------------------------------------------------

@@ -26,10 +26,7 @@ for filename in all_files:
     flat_list = [item for sublist in emg for item in sublist]
     li.append(flat_list)
 
-
-
-
-emg_correctmean = li - np.mean(li, axis=0)
+raw = np.array(li)
 low_pass=40 # low: low-pass cut off frequency
 sfreq=1000 # sfreq: sampling frequency
 high_band=40
@@ -43,14 +40,14 @@ low_band = low_band/(sfreq/2)
 b1, a1 = sp.signal.butter(4, [high_band,low_band], btype='bandpass')
 
 # process EMG signal: filter EMG
-emg_filtered = sp.signal.filtfilt(b1, a1, li, axis=0)
+emg_filtered = np.array([sp.signal.filtfilt(b1, a1, x) for x in li])
 
 # process EMG signal: rectify
 rect_signal = abs(emg_filtered)
 
 #create lowpass filter and apply to rectified signal to get EMG envelope
-low_pass = low_pass/(sfreq/2)
-b2, a2 = sp.signal.butter(4, low_pass, btype='lowpass')
+nlow_pass = low_pass/(sfreq/2)
+b2, a2 = sp.signal.butter(4, nlow_pass, btype='lowpass')
 emg_envelope = np.array(sp.signal.filtfilt(b2, a2, rect_signal, axis=0))
 
 
@@ -92,19 +89,16 @@ def features(emg_envelope):
     return[mav, rms, var, wl, zc, mav_slope, ncm, damv]
 
 
-features_list = ['mav', 'rms', 'var', 'wl', 'zc', 'mav_slope', 'ncm', 'damv']
+features_list = ['emg_envelope', 'mav', 'rms', 'var', 'wl', 'zc', 'mav_slope', 'ncm', 'damv']
 
 for feature in features_list:
     # Extract features using the selected feature extraction method
-    X = []
-    for emg in emg_envelope:
-        X.append(features(emg))
-    X = np.array(X)
+    X = np.array([features(emg) for emg in emg_envelope])
 
     # Train a classifier
     tar = ["Switch", "Freeze", "On/Off", "Forw", "Back", "Left", "Right", "Up", "Down"]
     n = 10
-    target = np.repeat(tar, n)
+    target = np.repeat(tar, len(li)//len(tar))
     y = target
     clf = SVC(kernel="linear", C=0.025)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2)
