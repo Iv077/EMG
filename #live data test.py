@@ -85,96 +85,100 @@ class Plot(object):
         emg_envelope = np.array(sp.signal.filtfilt(b2, a2, emg_rectified, axis=0))
 
         if len(emg_envelope) >= 1365:
-            classi = classifier.predict(emg_envelope.reshape(1,-1))
+          classi = classifier.predict(emg_envelope.reshape(1,-1))
+          proba = classifier.predict_proba(emg_envelope.reshape(1,-1))[0]
+          if max(proba) < 0.7:
+              print("Do the gesture again")
+          else:
             if classi == ['Forw']:
-                print('Forwards')
-                # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                # PORT = 3020  # port number for socket communication
-                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # sock.connect((HOST, PORT))
-                # message = "forward".encode()
-                # sock.send(message)
-                # sock.close()
-                sleep(1)
+              print('Forwards')
+              # HOST = "192.168.8.50"  # IP address of turtlebot robot
+              # PORT = 3020  # port number for socket communication
+              # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              # sock.connect((HOST, PORT))
+              # message = "forward".encode()
+              # sock.send(message)
+              # sock.close()
+              sleep(1)
 
             if classi == ['Left']:
-                print('Left')
-                # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                # PORT = 3020  # port number for socket communication
-                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # sock.connect((HOST, PORT))
-                # message = "left".encode()
-                # sock.send(message)
-                # sock.close()
-                sleep(1)
+              print('Left')
+              # HOST = "192.168.8.50"  # IP address of turtlebot robot
+              # PORT = 3020  # port number for socket communication
+              # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              # sock.connect((HOST, PORT))
+              # message = "left".encode()
+              # sock.send(message)
+              # sock.close()
+              sleep(1)
 
             if classi == ['Right']:
-                print('Right')
-                # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                # PORT = 3020  # port number for socket communication
-                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # sock.connect((HOST, PORT))
-                # message = "right".encode()
-                # sock.send(message)
-                # sock.close()
-                sleep(1)
+              print('Right')
+              # HOST = "192.168.8.50"  # IP address of turtlebot robot
+              # PORT = 3020  # port number for socket communication
+              # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              # sock.connect((HOST, PORT))
+              # message = "right".encode()
+              # sock.send(message)
+              # sock.close()
+              sleep(1)
 
             if classi == ['Switch']:
-                print('Switch')
-                # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                # PORT = 3020  # port number for socket communication
-                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # sock.connect((HOST, PORT))
-                # message = "switch".encode()
-                # sock.send(message)
-                # sock.close()
-                sleep(1)
+              print('Switch')
+              # HOST = "192.168.8.50"  # IP address of turtlebot robot
+              # PORT = 3020  # port number for socket communication
+              # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              # sock.connect((HOST, PORT))
+              # message = "switch".encode()
+              # sock.send(message)
+              # sock.close()
+              sleep(1)
 
             if classi == ['Back']:
-                print('Backwards')
-                # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                # PORT = 3020  # port number for socket communication
-                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # sock.connect((HOST, PORT))
-                # message = "station".encode()
-                # sock.send(message)
-                # sock.close()
-                sleep(1)
+              print('Backwards')
+              # HOST = "192.168.8.50"  # IP address of turtlebot robot
+              # PORT = 3020  # port number for socket communication
+              # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              # sock.connect((HOST, PORT))
+              # message = "station".encode()
+              # sock.send(message)
+              # sock.close()
+              sleep(1)
 
             if classi == ['Up']:
-                print('Up')
-                # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                # PORT = 3020  # port number for socket communication
-                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # sock.connect((HOST, PORT))
-                # message = "station".encode()
-                # sock.send(message)
-                # sock.close()
-                sleep(1)
+              print('Up')
+              # HOST = "192.168.8.50"  # IP address of turtlebot robot
+              # PORT = 3020  # port number for socket communication
+              # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              # sock.connect((HOST, PORT))
+              # message = "station".encode()
+              # sock.send(message)
+              # sock.close()
+              sleep(1)
             
             if classi == ['Down']:
-                print('Down')
-                # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                # PORT = 3020  # port number for socket communication
-                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # sock.connect((HOST, PORT))
-                # message = "station".encode()
-                # sock.send(message)
-                # sock.close()
-                sleep(1)
+              print('Down')
+              # HOST = "192.168.8.50"  # IP address of turtlebot robot
+              # PORT = 3020  # port number for socket communication
+              # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              # sock.connect((HOST, PORT))
+              # message = "station".encode()
+              # sock.send(message)
+              # sock.close()
+              sleep(1)
             
             if classi == ['Freeze']:
-                print('Freeze')
-                # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                # PORT = 3020  # port number for socket communication
-                # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # sock.connect((HOST, PORT))
-                # message = "station".encode()
-                # sock.send(message)
-                # sock.close()
-                sleep(1)
+              print('Freeze')
+              # HOST = "192.168.8.50"  # IP address of turtlebot robot
+              # PORT = 3020  # port number for socket communication
+              # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+              # sock.connect((HOST, PORT))
+              # message = "station".encode()
+              # sock.send(message)
+              # sock.close()
+              sleep(1)
 
-        
+          
 
 
 
