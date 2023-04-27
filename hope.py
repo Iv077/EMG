@@ -110,6 +110,94 @@ class Plot(object):
                 #print(emg_envelope.shape)
                 classi = self.classifier.predict(emg_envelope.reshape(1,-1))
                 print('Classification result:', classi)
+                if classi == ['Forw']:
+                  print('Forwards')
+                  # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                  # PORT = 3020  # port number for socket communication
+                  # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                  # sock.connect((HOST, PORT))
+                  # message = "forward".encode()
+                  # sock.send(message)
+                  # sock.close()
+                  sleep(1)
+
+                if classi == ['Left']:
+                    print('Left')
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 3020  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "left".encode()
+                    # sock.send(message)
+                    # sock.close()
+                    sleep(1)
+
+                if classi == ['Right']:
+                    print('Right')
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 3020  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "right".encode()
+                    # sock.send(message)
+                    # sock.close()
+                    sleep(1)
+
+                if classi == ['Switch']:
+                    print('Switch')
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 3020  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "switch".encode()
+                    # sock.send(message)
+                    # sock.close()
+                    sleep(1)
+
+                if classi == ['Back']:
+                    print('Backwards')
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 3020  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "station".encode()
+                    # sock.send(message)
+                    # sock.close()
+                    sleep(1)
+
+                if classi == ['Up']:
+                    print('Up')
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 3020  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "station".encode()
+                    # sock.send(message)
+                    # sock.close()
+                    sleep(1)
+                
+                if classi == ['Down']:
+                    print('Down')
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 3020  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "station".encode()
+                    # sock.send(message)
+                    # sock.close()
+                    sleep(1)
+                
+                if classi == ['Freeze']:
+                    print('Freeze')
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 3020  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "station".encode()
+                    # sock.send(message)
+                    # sock.close()
+                    sleep(1)
+
 
                 self.start_collecting = False
                 return

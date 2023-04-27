@@ -52,30 +52,36 @@ emg_envelope = np.array(sp.signal.filtfilt(b2, a2, rect_signal, axis=0))
 
 
 #####################   FEATURES    ########################
-def features(emg_envelope):
+def features(raw):
     # Calculate mean absolute value (MAV) feature
-    mav = np.mean(emg_envelope)
+    mav = np.mean(raw)
 
     # Calculate root mean square (RMS) feature
-    rms = math.sqrt(np.mean(np.square(emg_envelope)))
+    rms = math.sqrt(np.mean(np.square(raw)))
 
     # Calculate variance of absolute values (VAR) feature
-    var = np.var(emg_envelope)
+    var = np.var(raw)
 
     # Calculate waveform length (WL) feature
-    wl = np.sum(np.abs(np.diff(emg_envelope)))
+    wl = np.sum(np.abs(np.diff(raw)))
 
     # Calculate zero crossing (ZC) feature
-    zc = np.sum(np.abs(np.diff(np.sign(emg_envelope)))) / (2 * emg_envelope.size)
+    zc = np.sum(np.abs(np.diff(np.sign(raw)))) / (2 * raw.size)
 
     # Calculate the mean absolute value slope (MAVS) feature
-    mav_slope = np.mean(np.abs(np.diff(emg_envelope)))
+    mav_slope = np.mean(np.abs(np.diff(raw)))
 
     # Calculate the number of crossings of mean (NCM) feature
-    ncm = np.sum(np.abs(np.diff(np.sign(emg_envelope - mav / 2)))) / (2 * len(emg_envelope))
+    ncm = np.sum(np.abs(np.diff(np.sign(raw - mav / 2)))) / (2 * len(raw))
 
     # Calculate the difference absolute mean value (DAMV) feature
-    damv = np.median(np.abs(emg_envelope - mav))
+    damv = np.median(np.abs(raw - mav))
+
+    # Calculate the simple Square Integral (ssi) feature
+    ssi = np.sum(raw**2,axis=0)
+
+    # Calculate the absolute differential signal (ADS) feature
+    ads = np.sum(np.abs(np.diff(raw,axis=0)),axis=0)
 
     # Calculate frequency domain features using Fourier transform
     # fft = np.fft.rfft(emg_envelope)
@@ -86,19 +92,19 @@ def features(emg_envelope):
     
     # Add any additional feature extraction methods here
     
-    return[mav, rms, var, wl, zc, mav_slope, ncm, damv]
+    return[mav, rms, var, wl, zc, mav_slope, ncm, damv, ssi, ads]
 
 
-features_list = ['emg_envelope', 'mav', 'rms', 'var', 'wl', 'zc', 'mav_slope', 'ncm', 'damv']
+features_list = ['emg_envelope', 'mav', 'rms', 'var', 'wl', 'zc', 'mav_slope', 'ncm', 'damv', 'ssi', 'ads']
 
 for feature in features_list:
     # Extract features using the selected feature extraction method
-    X = np.array([features(emg) for emg in emg_envelope])
+    X = np.array([features(emg) for emg in raw])
 
     # Train a classifier
     tar = ["Switch", "Freeze", "On/Off", "Forw", "Back", "Left", "Right", "Up", "Down"]
     n = 10
-    target = np.repeat(tar, len(li)//len(tar))
+    target = np.repeat(tar, n)
     y = target
     clf = SVC(kernel="linear", C=0.025)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2)
