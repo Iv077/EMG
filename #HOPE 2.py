@@ -1,3 +1,5 @@
+#HOPE 2.0
+
 from collections import deque
 from threading import Lock, Thread
 import joblib
@@ -45,7 +47,7 @@ class Plot(object):
     self.listener = listener
     self.start_collecting = False
     self.collected_data = []
-    self.classifier = joblib.load('EMG_Classifier3.sav')
+    self.classifier = joblib.load('EMG_Classifier2.sav')
     self.last_timestamp = 0
 
   def update_plot(self):
@@ -83,14 +85,14 @@ class Plot(object):
     # When the needed number of values is collected, perform classification
             if len(hi) >= 2730:                                                
                 emg_iva = hi [:2730]
+                mav = np.mean(emg_iva)
                 print('I got the gesture, relax')
                 #print(emg_iva)
                 
-                emg_correctmean = emg_iva - np.mean(emg_iva, axis=0)
-                low_pass=50 # low: low-pass cut off frequency
-                sfreq=2000 # sfreq: sampling frequency
+                low_pass=10 # low: low-pass cut off frequency
+                sfreq=500 # sfreq: sampling frequency
                 high_band=50
-                low_band=70
+                low_band=100
                 # emg: EMG data
                 # high: high-pass cut off frequency
                 
@@ -102,7 +104,7 @@ class Plot(object):
                 b1, a1 = sp.signal.butter(4, [high_band,low_band], btype='bandpass')
 
                 # process EMG signal: filter EMG
-                emg_filtered = sp.signal.filtfilt(b1, a1, emg_correctmean, axis=0)
+                emg_filtered = sp.signal.filtfilt(b1, a1, emg_iva, axis=0)
 
                 # process EMG signal: rectify
                 emg_rectified = abs(emg_filtered)
@@ -111,15 +113,22 @@ class Plot(object):
                 low_pass = low_pass/(sfreq/2)
                 b2, a2 = sp.signal.butter(4, low_pass, btype='lowpass')
                 emg_envelope = np.array(sp.signal.filtfilt(b2, a2, emg_rectified, axis=0))
-                #print(emg_envelope.shape)
-                mav_slope = np.abs(np.diff(emg_envelope))
 
-                
-                classi = self.classifier.predict(mav_slope.reshape(1,-1))
+                result = emg_envelope/mav
+                from sklearn.decomposition import PCA
+
+                # perform PCA on emg_envelope
+                pca = PCA(n_components=2)
+                X_pca = np.array(pca.fit_transform(result))
+
+                #print(emg_envelope.shape)
+                classi = self.classifier.predict(result.reshape(1,-1))
+
+    # tar = ["Horn", "Fist", "Victory", "Rotation", "Up", "Down", "Spread", "OK"]
 
                 #print('Classification result:', classi)
                 if classi == ['Horn']:
-                  print('Forwards/Horn')
+                  print('Forwards')
                   HOST = "192.168.8.50"  # IP address of turtlebot robot
                   PORT = 2000  # port number for socket communication
                   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -134,8 +143,8 @@ class Plot(object):
                             
 
 
-                if classi == ['Victory']:
-                    print('Left/Victory')
+                if classi == ['Rotation']:
+                    print('Left')
                     HOST = "192.168.8.50"  # IP address of turtlebot robot
                     PORT = 2000  # port number for socket communication
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -149,8 +158,8 @@ class Plot(object):
                     print("Time taken: {:.10f} seconds".format(time_taken))
                             
 
-                if classi == ['Rotation']:
-                    print('Right/Rotation')
+                if classi == ['Spread']:
+                    print('Right')
                     HOST = "192.168.8.50"  # IP address of turtlebot robot
                     PORT = 2000  # port number for socket communication
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -167,7 +176,7 @@ class Plot(object):
                 # if classi == ['Switch']:
                 #     print('')
                 #     HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     PORT = 3020  # port number for socket communication
+                #     PORT = 2000  # port number for socket communication
                 #     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #     sock.connect((HOST, PORT))
                 #     message = "right".encode()
@@ -178,7 +187,7 @@ class Plot(object):
                 # if classi == ['Back']:
                 #     print('Backwards')
                 #     # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     # PORT = 3020  # port number for socket communication
+                #     # PORT = 2000  # port number for socket communication
                 #     # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #     # sock.connect((HOST, PORT))
                 #     # message = "station".encode()
@@ -189,7 +198,7 @@ class Plot(object):
                 # if classi == ['Up']:
                 #     print('Up')
                 #     # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     # PORT = 3020  # port number for socket communication
+                #     # PORT = 2000  # port number for socket communication
                 #     # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #     # sock.connect((HOST, PORT))
                 #     # message = "station".encode()
@@ -199,7 +208,7 @@ class Plot(object):
                 # if classi == ['Down']:
                 #     print('Down')
                 #     # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     # PORT = 3020  # port number for socket communication
+                #     # PORT = 2000  # port number for socket communication
                 #     # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #     # sock.connect((HOST, PORT))
                 #     # message = "station".encode()
@@ -209,7 +218,7 @@ class Plot(object):
                 # if classi == ['Freeze']:
                 #     print('Freeze')
                 #     # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     # PORT = 3020  # port number for socket communication
+                #     # PORT = 2000  # port number for socket communication
                 #     # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #     # sock.connect((HOST, PORT))
                 #     # message = "station".encode()

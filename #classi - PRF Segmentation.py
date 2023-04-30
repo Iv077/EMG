@@ -18,7 +18,7 @@ import math
 
 
 
-path = "idk/"
+path = "Iva - 90/"
 all_files = glob.glob(path + "*.csv")
 
 li = []
@@ -26,52 +26,63 @@ for filename in all_files:
     emg = pd.read_csv(filename, index_col=1, delimiter=',', usecols=range(1,9), nrows=390)
     emg = np.array(emg)
     flat_list = [item for sublist in emg for item in sublist]
+    print(flat_list)
     li.append(flat_list)
 
 raw = np.array(li)
+#print(raw)
+
+#####################   FEATURES    ########################
+def features(raw):
+    # Calculate mean absolute value (MAV) feature
+    mav = np.mean(raw)
+
+    # Calculate root mean square (RMS) feature
+    rms = math.sqrt(np.mean(np.square(raw)))
+
+    # Calculate variance of absolute values (VAR) feature
+    var = np.var(raw)
+
+    # Calculate waveform length (WL) feature
+    wl = np.sum(np.abs(np.diff(raw)))
+
+    # Calculate zero crossing (ZC) feature
+    zc = np.sum(np.abs(np.diff(np.sign(raw)))) / (2 * raw.size)
+
+    # Calculate the mean absolute value slope (MAVS) feature
+    mav_slope = np.mean(np.abs(np.diff(raw)))
+
+    # Calculate the number of crossings of mean (NCM) feature
+    ncm = np.sum(np.abs(np.diff(np.sign(raw - mav / 2)))) / (2 * len(raw))
+
+    # Calculate the difference absolute mean value (DAMV) feature
+    damv = np.median(np.abs(raw - mav))
+
+    # Calculate the simple Square Integral (ssi) feature
+    ssi = np.sum(raw**2,axis=0)
+
+    # Calculate the absolute differential signal (ADS) feature
+    ads = np.sum(np.abs(np.diff(raw,axis=0)),axis=0)
+
+    # Calculate frequency domain features using Fourier transform
+    # fft = np.fft.rfft(emg_envelope)
+    # power_spectrum = np.abs(fft) ** 2
+    # total_power = np.sum(power_spectrum)
+    # mean_frequency = np.sum(power_spectrum * np.arange(len(fft))) / total_power
+    # spectral_centroid = sp.signal.spectral_centroid(emg_envelope, sfreq)[0]
+    
+    # Add any additional feature extraction methods here
+    
+    return[mav, rms, var, wl, zc, mav_slope, ncm, damv, ssi, ads]
 
 
-
-# Calculate mean absolute value (MAV) feature
-mav = np.mean(raw)
-
-# Calculate root mean square (RMS) feature
-rms = math.sqrt(np.mean(np.square(raw)))
-
-# Calculate variance of absolute values (VAR) feature
-var = np.var(raw)
-
-# Calculate waveform length (WL) feature
-wl = np.sum(np.abs(np.diff(raw)))
-
-# Calculate zero crossing (ZC) feature
-zc = np.sum(np.abs(np.diff(np.sign(raw)))) / (2 * raw.size)
-
-# Calculate the mean absolute value slope (MAVS) feature
-mav_slope = np.mean(np.abs(np.diff(raw)))
-
-# Calculate the number of crossings of mean (NCM) feature
-ncm = np.sum(np.abs(np.diff(np.sign(raw - mav / 2)))) / (2 * len(raw))
-
-# Calculate the difference absolute mean value (DAMV) feature
-damv = np.median(np.abs(raw - mav))
-
-# Calculate the simple Square Integral (ssi) feature
-ssi = np.sum(raw**2,axis=0)
-
-# Calculate the absolute differential signal (ADS) feature
-ads = np.sum(np.abs(np.diff(raw,axis=0)),axis=0)
-
-
-features_list = [mav, rms, var, wl, zc, mav_slope, ncm, damv, ssi, ads]
+features_list = ['mav', 'rms', 'var', 'wl', 'zc', 'mav_slope', 'ncm', 'damv', 'ssi', 'ads']
 
 for feature in features_list:
-    hi = raw/feature
-
-    low_pass=10 # low: low-pass cut off frequency
-    sfreq=500 # sfreq: sampling frequency
-    high_band=50
-    low_band=100
+    low_pass=40 # low: low-pass cut off frequency
+    sfreq=1000 # sfreq: sampling frequency
+    high_band=40
+    low_band=450
 
     # normalise cut-off frequencies to sampling frequency
     high_band = high_band/(sfreq/2)
@@ -81,7 +92,7 @@ for feature in features_list:
     b1, a1 = sp.signal.butter(4, [high_band,low_band], btype='bandpass')
 
     # process EMG signal: filter EMG
-    emg_filtered = np.array([sp.signal.filtfilt(b1, a1, x) for x in hi])
+    emg_filtered = np.array([sp.signal.filtfilt(b1, a1, x) for x in li])
 
     # process EMG signal: rectify
     rect_signal = abs(emg_filtered)
@@ -97,8 +108,7 @@ for feature in features_list:
     X = emg_envelope
 
     # Train a classifier
-    tar = ["Horn", "Fist", "Victory", "Rotation", "Up", "Down", "Spread", "OK"]
-    #tar = ["Switch", "Freeze", "On/Off", "Forw", "Back", "Left", "Right", "Up", "Down"]
+    tar = ["Switch", "Freeze", "On/Off", "Forw", "Back", "Left", "Right", "Up", "Down"]
     n = 10
     target = np.repeat(tar, n)
     y = target
@@ -109,7 +119,7 @@ for feature in features_list:
     # Evaluate classification performance
     score = clf.score(X_test, y_test)
     #print('Feature extraction pre filtering')
-    print('Classification score for', feature, ':', score*100, '%')
+    #print('Classification score for', feature, ':', score*100, '%')
 
 
 
