@@ -1,5 +1,3 @@
-#HOPE 2.0
-
 from collections import deque
 from threading import Lock, Thread
 import joblib
@@ -7,10 +5,7 @@ import scipy as sp
 from scipy.signal import filtfilt
 import socket
 import pandas as pd     #   library to be able to access each of the csv files
-import time
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-
+from time import sleep
 
 import myo
 import numpy as np
@@ -24,7 +19,7 @@ class EmgCollector(myo.DeviceListener):
   def __init__(self, n):
     self.n = n
     self.lock = Lock()
-    self.emg_data_queue = deque(maxlen=2000)
+    self.emg_data_queue = deque(maxlen=n)
 
   def get_emg_data(self):
     with self.lock:
@@ -47,7 +42,7 @@ class Plot(object):
     self.listener = listener
     self.start_collecting = False
     self.collected_data = []
-    self.classifier = joblib.load('EMG_Classifier2.sav')
+    self.classifier = joblib.load('EMG_Classifier1.sav')
     self.last_timestamp = 0
 
   def update_plot(self):
@@ -55,7 +50,7 @@ class Plot(object):
     emg_sig = np.array([x[1] for x in emg_sig]).T
     if not self.start_collecting:
       print('Expecting a gesture')
-      if np.any(emg_sig >= 50):
+      if np.any(emg_sig >= 30):
         self.start_collecting = True
         self.collected_data = []
         #print('Start collecting data for classification.')
@@ -85,14 +80,14 @@ class Plot(object):
     # When the needed number of values is collected, perform classification
             if len(hi) >= 2730:                                                
                 emg_iva = hi [:2730]
-                mav = np.mean(emg_iva)
-                print('I got the gesture, relax')
+                
                 #print(emg_iva)
                 
+                emg_correctmean = emg_iva - np.mean(emg_iva, axis=0)
                 low_pass=10 # low: low-pass cut off frequency
-                sfreq=500 # sfreq: sampling frequency
-                high_band=50
-                low_band=100
+                sfreq=400 # sfreq: sampling frequency
+                high_band=20
+                low_band=50
                 # emg: EMG data
                 # high: high-pass cut off frequency
                 
@@ -104,7 +99,7 @@ class Plot(object):
                 b1, a1 = sp.signal.butter(4, [high_band,low_band], btype='bandpass')
 
                 # process EMG signal: filter EMG
-                emg_filtered = sp.signal.filtfilt(b1, a1, emg_iva, axis=0)
+                emg_filtered = sp.signal.filtfilt(b1, a1, emg_correctmean, axis=0)
 
                 # process EMG signal: rectify
                 emg_rectified = abs(emg_filtered)
@@ -113,120 +108,16 @@ class Plot(object):
                 low_pass = low_pass/(sfreq/2)
                 b2, a2 = sp.signal.butter(4, low_pass, btype='lowpass')
                 emg_envelope = np.array(sp.signal.filtfilt(b2, a2, emg_rectified, axis=0))
-
-                result = emg_envelope/mav
-                from sklearn.decomposition import PCA
-
-                # perform PCA on emg_envelope
-                pca = PCA(n_components=2)
-                X_pca = np.array(pca.fit_transform(result))
-
+                
+                
+                mav = np.mean(emg_iva)
+                he = np.array(emg_envelope/mav)
                 #print(emg_envelope.shape)
-                classi = self.classifier.predict(result.reshape(1,-1))
-
-    # tar = ["Horn", "Fist", "Victory", "Rotation", "Up", "Down", "Spread", "OK"]
-
-                #print('Classification result:', classi)
-                if classi == ['Horn']:
-                  print('Forwards')
-                  HOST = "192.168.8.50"  # IP address of turtlebot robot
-                  PORT = 2000  # port number for socket communication
-                  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                  sock.connect((HOST, PORT))
-                  message = "forward".encode()
-                  start_time = time.perf_counter()  # start time measurement
-                  sock.send(message)
-                  sock.close()
-                  end_time = time.perf_counter()  # end time measurement
-                  time_taken = end_time - start_time
-                  print("Time taken: {:.10f} seconds".format(time_taken))
-                            
-
-
-                if classi == ['Rotation']:
-                    print('Left')
-                    HOST = "192.168.8.50"  # IP address of turtlebot robot
-                    PORT = 2000  # port number for socket communication
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.connect((HOST, PORT))
-                    message = "left".encode()
-                    start_time = time.perf_counter()  # start time measurement
-                    sock.send(message)
-                    sock.close()
-                    end_time = time.perf_counter()  # end time measurement
-                    time_taken = end_time - start_time
-                    print("Time taken: {:.10f} seconds".format(time_taken))
-                            
-
-                if classi == ['Spread']:
-                    print('Right')
-                    HOST = "192.168.8.50"  # IP address of turtlebot robot
-                    PORT = 2000  # port number for socket communication
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.connect((HOST, PORT))
-                    message = "right".encode()
-                    start_time = time.perf_counter()  # start time measurement
-                    sock.send(message)
-                    sock.close()
-                    end_time = time.perf_counter()  # end time measurement
-                    time_taken = end_time - start_time
-                    print("Time taken: {:.10f} seconds".format(time_taken))
-                                    
-
-                # if classi == ['Switch']:
-                #     print('')
-                #     HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     PORT = 2000  # port number for socket communication
-                #     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                #     sock.connect((HOST, PORT))
-                #     message = "right".encode()
-                #     sock.send(message)
-                #     sock.close()
-                    
-
-                # if classi == ['Back']:
-                #     print('Backwards')
-                #     # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     # PORT = 2000  # port number for socket communication
-                #     # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                #     # sock.connect((HOST, PORT))
-                #     # message = "station".encode()
-                #     # sock.send(message)
-                #     # sock.close()
-
-
-                # if classi == ['Up']:
-                #     print('Up')
-                #     # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     # PORT = 2000  # port number for socket communication
-                #     # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                #     # sock.connect((HOST, PORT))
-                #     # message = "station".encode()
-                #     # sock.send(message)
-                #     # sock.close()
-                
-                # if classi == ['Down']:
-                #     print('Down')
-                #     # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     # PORT = 2000  # port number for socket communication
-                #     # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                #     # sock.connect((HOST, PORT))
-                #     # message = "station".encode()
-                #     # sock.send(message)
-                #     # sock.close()
-                
-                # if classi == ['Freeze']:
-                #     print('Freeze')
-                #     # HOST = "192.168.8.50"  # IP address of turtlebot robot
-                #     # PORT = 2000  # port number for socket communication
-                #     # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                #     # sock.connect((HOST, PORT))
-                #     # message = "station".encode()
-                #     # sock.send(message)
-                #     # sock.close()
-
+                classi = self.classifier.predict(he.reshape(1,-1))
+                print('Classification result:', classi)
 
                 self.start_collecting = False
+                
                 return
                 
 

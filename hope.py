@@ -87,10 +87,10 @@ class Plot(object):
                 #print(emg_iva)
                 
                 emg_correctmean = emg_iva - np.mean(emg_iva, axis=0)
-                low_pass=50 # low: low-pass cut off frequency
-                sfreq=2000 # sfreq: sampling frequency
-                high_band=50
-                low_band=70
+                low_pass=10 # low: low-pass cut off frequency
+                sfreq=400 # sfreq: sampling frequency
+                high_band=20
+                low_band=50
                 # emg: EMG data
                 # high: high-pass cut off frequency
                 
@@ -120,48 +120,48 @@ class Plot(object):
                 #print('Classification result:', classi)
                 if classi == ['Horn']:
                   print('Forwards/Horn')
-                  HOST = "192.168.8.50"  # IP address of turtlebot robot
-                  PORT = 2000  # port number for socket communication
-                  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                  sock.connect((HOST, PORT))
-                  message = "forward".encode()
-                  start_time = time.perf_counter()  # start time measurement
-                  sock.send(message)
-                  sock.close()
-                  end_time = time.perf_counter()  # end time measurement
-                  time_taken = end_time - start_time
-                  print("Time taken: {:.10f} seconds".format(time_taken))
+                  # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                  # PORT = 2000  # port number for socket communication
+                  # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                  # sock.connect((HOST, PORT))
+                  # message = "forward".encode()
+                  # start_time = time.perf_counter()  # start time measurement
+                  # sock.send(message)
+                  # sock.close()
+                  # end_time = time.perf_counter()  # end time measurement
+                  # time_taken = end_time - start_time
+                  # print("Time taken: {:.10f} seconds".format(time_taken))
                             
 
 
                 if classi == ['Victory']:
                     print('Left/Victory')
-                    HOST = "192.168.8.50"  # IP address of turtlebot robot
-                    PORT = 2000  # port number for socket communication
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.connect((HOST, PORT))
-                    message = "left".encode()
-                    start_time = time.perf_counter()  # start time measurement
-                    sock.send(message)
-                    sock.close()
-                    end_time = time.perf_counter()  # end time measurement
-                    time_taken = end_time - start_time
-                    print("Time taken: {:.10f} seconds".format(time_taken))
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 2000  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "left".encode()
+                    # start_time = time.perf_counter()  # start time measurement
+                    # sock.send(message)
+                    # sock.close()
+                    # end_time = time.perf_counter()  # end time measurement
+                    # time_taken = end_time - start_time
+                    # print("Time taken: {:.10f} seconds".format(time_taken))
                             
 
                 if classi == ['Rotation']:
                     print('Right/Rotation')
-                    HOST = "192.168.8.50"  # IP address of turtlebot robot
-                    PORT = 2000  # port number for socket communication
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.connect((HOST, PORT))
-                    message = "right".encode()
-                    start_time = time.perf_counter()  # start time measurement
-                    sock.send(message)
-                    sock.close()
-                    end_time = time.perf_counter()  # end time measurement
-                    time_taken = end_time - start_time
-                    print("Time taken: {:.10f} seconds".format(time_taken))
+                    # HOST = "192.168.8.50"  # IP address of turtlebot robot
+                    # PORT = 2000  # port number for socket communication
+                    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # sock.connect((HOST, PORT))
+                    # message = "right".encode()
+                    # start_time = time.perf_counter()  # start time measurement
+                    # sock.send(message)
+                    # sock.close()
+                    # end_time = time.perf_counter()  # end time measurement
+                    # time_taken = end_time - start_time
+                    # print("Time taken: {:.10f} seconds".format(time_taken))
                                     
 
                 # if classi == ['Switch']:
